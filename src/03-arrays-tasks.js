@@ -606,7 +606,6 @@ function swapHeadAndTail(arr) {
 
   const start = arr.splice(0, average);
   const end = arr;
-  console.log(end);
   if (middle) {
     return [].concat(end, middle, start);
   }
