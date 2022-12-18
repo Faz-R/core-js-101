@@ -230,8 +230,11 @@ function findFirstSingleChar(str) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  const left = isStartIncluded ? '[' : '(';
+  const right = isEndIncluded ? ']' : ')';
+
+  return `${left}${Math.min(a, b)}, ${Math.max(a, b)}${right}`;
 }
 
 
@@ -247,8 +250,8 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.split('').reverse().join('');
 }
 
 
@@ -264,8 +267,8 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  return Number(String(num).split('').reverse().join(''));
 }
 
 
@@ -289,8 +292,22 @@ function reverseInteger(/* num */) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const num = String(ccn).split('');
+  const res = Number(num.splice(num.length - 1, 1));
+  const arr = num.reverse().map((e, index) => {
+    let arg = e;
+    if (index % 2 === 0) {
+      arg *= 2;
+      if (arg > 9) {
+        arg -= 9;
+      }
+      return arg;
+    }
+    return Number(arg);
+  });
+  const sum = arr.reduce((s, e) => s + e, 0);
+  return (sum % 10 !== 0) ? ((10 - (sum % 10)) === res) : (sum % 10 === res);
 }
 
 /**
@@ -307,8 +324,9 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const res = num.toString().split('').reduce((sum, e) => sum + Number(e), 0);
+  return (res > 10) ? String(res).split('').reduce((s, e) => s + Number(e), 0) : res;
 }
 
 
@@ -333,8 +351,37 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const ar = {
+    '[': ']', '(': ')', '{': '}', '<': '>',
+  };
+  const mas = [];
+  let answ = false;
+  const res = str.split('');
+  if (!res.length) {
+    return true;
+  }
+  res.map((e) => {
+    if (!mas.length && !ar[e]) {
+      answ = false;
+    } else if (ar[e]) {
+      mas.push(e);
+      if (!mas.length) {
+        answ = true;
+      } else {
+        answ = false;
+      }
+    } else if (ar[mas[mas.length - 1]] === e) {
+      mas.pop();
+      if (!mas.length) {
+        answ = true;
+      } else {
+        answ = false;
+      }
+    }
+    return e;
+  });
+  return answ;
 }
 
 
@@ -358,8 +405,8 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -375,8 +422,26 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const res = pathes.map((e) => e.split('/'));
+  let k = res[0].length;
+  const ex = res[0];
+  res.map((e, index) => {
+    if (index === 0) {
+      return e;
+    }
+    k = Math.min(k, e.length);
+    e.map((el, inx) => {
+      if (inx < k) {
+        if (el !== ex[inx]) {
+          k = inx;
+        }
+      }
+      return el;
+    });
+    return e;
+  });
+  return (k === 0) ? '' : (`${res[0].splice(0, k).join('/')}/`);
 }
 
 
@@ -398,8 +463,26 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(A, B) {
+  const rowsA = A.length; const colsB = B[0].length;
+  let C = [];
+  const ar = Array(rowsA).fill([]);
+  C = ar.map(() => Array(colsB).fill(0));
+
+  C.map((e, k) => {
+    e.map((el, i) => {
+      let t = 0;
+      B.map((ele, j) => {
+        t += A[i][j] * B[j][k];
+        return ele;
+      });
+      C[i][k] = t;
+      return el;
+    });
+    return e;
+  });
+
+  return C;
 }
 
 
@@ -433,8 +516,86 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  const mas = Array(3).fill(0).map(() => Array(3).fill(0));
+  let res;
+
+  mas.map((e, i) => {
+    let x = 0;
+    let o = 0;
+    mas.map((el, j) => {
+      if (position[i][j] === 'X') {
+        x += 1;
+      }
+      if (position[i][j] === '0') {
+        o += 1;
+      }
+      return el;
+    });
+    if (x === 3) {
+      res = 'X';
+    }
+    if (o === 3) {
+      res = '0';
+    }
+    return e;
+  });
+
+  mas.map((e, i) => {
+    let x = 0;
+    let o = 0;
+    mas.map((el, j) => {
+      if (position[j][i] === 'X') {
+        x += 1;
+      }
+      if (position[j][i] === '0') {
+        o += 1;
+      }
+      return el;
+    });
+    if (x === 3) {
+      res = 'X';
+    }
+    if (o === 3) {
+      res = '0';
+    }
+    return e;
+  });
+  let x = 0;
+  let o = 0;
+  mas.map((e, i) => {
+    if (position[i][i] === 'X') {
+      x += 1;
+    }
+    if (position[i][i] === '0') {
+      o += 1;
+    }
+    if (x === 3) {
+      res = 'X';
+    }
+    if (o === 3) {
+      res = '0';
+    }
+    return e;
+  });
+  x = 0;
+  o = 0;
+  mas.map((e, i) => {
+    if (position[i][2 - i] === 'X') {
+      x += 1;
+    }
+    if (position[i][2 - i] === '0') {
+      o += 1;
+    }
+    if (x === 3) {
+      res = 'X';
+    }
+    if (o === 3) {
+      res = '0';
+    }
+    return e;
+  });
+  return res;
 }
 
 
